@@ -158,6 +158,10 @@ header .container nav ul li a:hover{
     font-weight: 900;
     font-size: 20px;
 }
+.landing .text .content a:hover{
+    background-color: #023257;
+    color: rgb(230, 227, 227);
+}
 .devloppeurs{
     padding: 60px 0;
     text-align: center;
