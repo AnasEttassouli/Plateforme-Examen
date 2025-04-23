@@ -1,0 +1,87 @@
+  body {
+    font-family: Arial, sans-serif;
+    padding: 10px;
+    background-color: #f4f4f4;
+    direction: ltr;
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .logo {
+    width: 60px;
+    height: auto;
+  }
+  
+  .title {
+    font-size: 24px;
+    color: #013E6D;
+    margin: 0;
+  }
+  
+  
+  form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    margin: auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    color: #4C4C4C;
+    text-align: left;
+  }
+  
+  h2{
+    color: #013E6D;
+  }
+
+  label {
+    display: block;
+    margin-top: 15px;
+    color: #4C4C4C;
+    text-align: left;
+  }
+  
+  input, select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #013E6D;
+    text-align: left;
+  }
+  
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #013E6D;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #011f35;
+  }
+  
+  .register-link {
+    text-align: center;
+    margin-top: 20px;
+    color: #4C4C4C;
+  }
+  
+  .register-link a {
+    color: #013E6D;
+    text-decoration: none;
+  }
+  
+  .register-link a:hover {
+    text-decoration: underline;
+  }
+  
