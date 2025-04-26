@@ -1,6 +1,6 @@
 :root{
     --main-color:#013E6D;
-    --secod-color:#4C4C4C;
+    --second-color:#4C4C4C;
 }
 *{
     -webkit-box-sizing: border-box;
@@ -241,7 +241,7 @@ header .container nav ul li a:hover{
     margin-bottom: 20px;
 }
 .propos .container p{
-    color: var(--secod-color);
+    color: var(--second-color);
     line-height: 2;
     margin-bottom: 20px;
     font-size: 18px;
