@@ -1,0 +1,26 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  #login, #exam, #result {
+    display: none;
+  }
+  
+  .question {
+    margin-top: 20px;
+    font-size: 20px;
+  }
+  
+  .timer {
+    font-size: 18px;
+    margin-top: 10px;
+    color: red;
+  }
+  
+  button {
+    padding: 10px 20px;
+    margin-top: 20px;
+  }
+  
