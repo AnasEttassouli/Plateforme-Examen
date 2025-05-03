@@ -3,30 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <title>Examen en ligne</title>
-  <link rel="stylesheet" href=".css">
+  <link rel="stylesheet" href="Espace_etudiant.css">
 </head>
 <body>
+  <div id="exam-container">
+    <div id="exam">
+      <h2>Examen</h2>
+      <div id="geoStatus"></div>
+      <div id="question" class="question"></div>
+      <div id="timer" class="timer"></div>
+      <button onclick="nextQuestion()">Suivant</button>
+    </div>
 
-  <div id="login">
-    <h2>Connexion</h2>
-    <input type="text" id="username" placeholder="Nom d'utilisateur"><br><br>
-    <input type="password" id="password" placeholder="Mot de passe"><br><br>
-    <button onclick="login()">Se connecter</button>
+    <div id="result">
+      <h2>Résultat</h2>
+      <div id="score"></div>
+    </div>
   </div>
 
-  <div id="exam">
-    <h2>Examen</h2>
-    <div id="geoStatus"></div>
-    <div id="question" class="question"></div>
-    <div id="timer" class="timer"></div>
-    <button onclick="nextQuestion()">Suivant</button>
-  </div>
-
-  <div id="result">
-    <h2>Résultat</h2>
-    <div id="score"></div>
-  </div>
-
-  <script src="EsEspace_etudiant.js"></script>
+  <script src="Espace_etudiant.js"></script>
 </body>
 </html>
