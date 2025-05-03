@@ -1,26 +1,45 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 20px;
-  }
-  
-  #login, #exam, #result {
-    display: none;
-  }
-  
-  .question {
-    margin-top: 20px;
-    font-size: 20px;
-  }
-  
-  .timer {
-    font-size: 18px;
-    margin-top: 10px;
-    color: red;
-  }
-  
-  button {
-    padding: 10px 20px;
-    margin-top: 20px;
-  }
-  
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
+}
+
+#exam-container {
+  background-color: white;
+  width: 400px;
+  margin: 100px auto;
+  padding: 30px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  text-align: center;
+}
+
+h2 {
+  color: #013E6D;
+}
+
+.question {
+  font-size: 20px;
+  margin: 20px 0;
+  color: #4C4C4C;
+}
+
+.timer {
+  font-size: 18px;
+  color: red;
+}
+
+button {
+  background-color: #013E6D;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #022c4b;
+}
