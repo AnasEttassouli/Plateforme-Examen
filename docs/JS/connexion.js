@@ -24,7 +24,9 @@ form.addEventListener("submit", async (e) => {
             if (data.user.role === "teacher") {
                 window.location.href = "enseignant.html";
             } else {
-                window.location.href = "etudiant.html";
+                // ✅ Rediriger automatiquement avec le lien d'examen dans l'URL
+                const examLink = "d415e42e-dc2f-4ca0-9201-365ae183451c";
+                window.location.href = `Espace_etudiant.html?exam=${examLink}`;
             }
         } else {
             alert(data.message || "Identifiants invalides.");

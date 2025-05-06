@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="CSS/enseignant.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -27,6 +27,7 @@
             </nav>
         </div>
     </header>
+
     <div class="landing">
         <div class="overlay"></div>
         <div class="text left-aligned">
@@ -41,32 +42,114 @@
             </div>
         </div>          
     </div>
+
     <section class="section" id="create-exam">
         <div class="container">
             <h2>Créer un nouvel examen</h2>
             <form id="createExamForm">
                 <div class="form-group">
-                    <label for="title">Titre de l'examen</label>
-                    <input type="text" id="title" required />
+                    <label for="examTitle">Titre de l'examen</label>
+                    <input type="text" id="examTitle" required />
                 </div>
                 <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea id="description" rows="3" required></textarea>
+                    <label for="examDescription">Description</label>
+                    <textarea id="examDescription" rows="3" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="publicCible">Public ciblé</label>
-                    <input type="text" id="publicCible" required />
+                    <label for="examPublic">Public ciblé</label>
+                    <input type="text" id="examPublic" required />
                 </div>
-            <button type="submit">Créer l'examen</button>
+                <button type="submit">Créer l'examen</button>
+
+                <div id="exam-link-container" style="display: none; margin-top: 10px;">
+                    <label for="exam-link">Lien d'accès :</label>
+                    <input type="text" id="exam-link" readonly>
+                </div>
             </form>
         </div>
     </section>
+
     <section class="section" id="my-exams">
         <div class="container">
             <h2>Mes examens</h2>
             <div id="examsContainer" class="exam-list"></div>
         </div>
     </section>
+    
+    <div id="exam-results-section" style="display: none;">
+        <h3>Résultats de l'examen</h3>
+        <ul id="results-list"></ul>
+    </div>
+      
+    <section class="section" id="add-question">
+        <div class="container">
+            <h2>Ajouter une question</h2>
+            <form id="addQuestionForm">
+
+                <div class="form-group">
+                    <label for="examSelect">Choisir un examen</label>
+                    <select id="examSelect" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="questionType">Type de question</label>
+                    <select id="questionType" required onchange="toggleQuestionType()">
+                        <option value="">--Sélectionner--</option>
+                        <option value="qcm">QCM</option>
+                        <option value="directe">Question directe</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="media">Fichier multimédia (image/audio/vidéo) :</label>
+                    <input type="file" id="media" accept="image/*,audio/*,video/*">
+                </div>
+
+                <div class="form-group">
+                    <label for="questionText">Énoncé de la question</label>
+                    <textarea id="questionText" required></textarea>
+                </div>
+
+                <div id="qcmOptions" style="display: none;">
+                    <div class="form-group">
+                        <label>Options de réponse :</label>
+                        <input type="text" id="optionA" placeholder="Option A" />
+                        <input type="checkbox" id="correctA"> Bonne réponse<br>
+                        <input type="text" id="optionB" placeholder="Option B" />
+                        <input type="checkbox" id="correctB"> Bonne réponse<br>
+                        <input type="text" id="optionC" placeholder="Option C" />
+                        <input type="checkbox" id="correctC"> Bonne réponse<br>
+                        <input type="text" id="optionD" placeholder="Option D" />
+                        <input type="checkbox" id="correctD"> Bonne réponse<br>
+                    </div>
+                </div>
+
+                <div id="directAnswerSection" style="display: none;">
+                    <div class="form-group">
+                        <label for="directAnswer">Réponse attendue</label>
+                        <input type="text" id="directAnswer" placeholder="Réponse exacte" />
+                    </div>
+                    <div class="form-group">
+                        <label for="tolerance">Tolérance (%)</label>
+                        <input type="number" id="tolerance" value="0" min="0" max="100" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="note">Note attribuée :</label>
+                    <input type="number" id="note" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="duree">Durée (en secondes) :</label>
+                    <input type="number" id="duree" min="10" required>
+                </div>
+
+                <button type="submit">Ajouter la question</button>
+            </form>
+        </div>
+    </section>
+
     <footer>
         <p>&copy; 2025 <span>EXAMEN</span> Tous droits réservés</p>
     </footer>

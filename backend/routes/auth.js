@@ -1,12 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+
 
 const router = express.Router();
 
 router.post('/register',async(req,res) => {
     try{
-        const {name,email,password,role} = req.body;
+        const { name, email, password, role, dob, gender, institution, filiere } = req.body;
         const existingUser = await User.findOne({email});
         if(existingUser){
             return res.status(400).json({message: 'Cet email existe déjà'});
@@ -19,6 +21,10 @@ router.post('/register',async(req,res) => {
             email,
             password: hashedPassword,
             role,
+            dob,
+            gender,
+            institution,
+            filiere,
         });
 
         await newUser.save();
@@ -48,7 +54,7 @@ router.post('/login',async (req, res) => {
 
         const token = jwt.sign(
             {userId: user._id, role: user.role},
-            'your_jwt_secret',
+            process.env.JWT_SECRET,
             {expiresIn: '1h'}
         );
 

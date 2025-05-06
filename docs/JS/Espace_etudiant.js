@@ -1,24 +1,45 @@
 let questions = [];
 let current = 0;
 let correctAnswers = 0;
+let studentAnswers = [];
+let examId = "";
 const timePerQuestion = 10;
 let countdown;
 
-// Récupérer les questions depuis le serveur Node.js avec la géolocalisation
+// 📌 جلب الأسئلة ومعلومات الامتحان من الخادم (مع الرابط الديناميكي)
 function fetchQuestions() {
+  const params = new URLSearchParams(window.location.search);
+  const examLink = params.get("exam");
+
+  if (!examLink) {
+    alert("Lien d'examen manquant dans l'URL.");
+    return;
+  }
+
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition((position) => {
       document.getElementById('geoStatus').innerText =
         `Localisation enregistrée : (${position.coords.latitude}, ${position.coords.longitude})`;
 
-      fetch('http://localhost:3000/questions')
-        .then(response => response.json())
+      fetch(`http://localhost:5000/api/student/exam/${examLink}`, {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+      })
+        .then(res => res.json())
         .then(data => {
-          questions = data;
+          questions = data.questions;
+          examId = data.exam._id;
+
+          if (!questions || questions.length === 0) {
+            alert("Aucune question trouvée pour cet examen.");
+            return;
+          }
+
           startCountdown();
         })
         .catch(error => {
-          alert("Impossible de charger les questions depuis la base de données");
+          alert("Impossible de charger les questions depuis le serveur");
           console.error(error);
         });
 
@@ -30,7 +51,6 @@ function fetchQuestions() {
   }
 }
 
-// Compte à rebours avant le début de l'examen
 function startCountdown() {
   let counter = 5;
   const timerEl = document.getElementById('timer');
@@ -48,7 +68,10 @@ function startCountdown() {
 
 function showQuestion() {
   if (current < questions.length) {
-    document.getElementById('question').innerText = questions[current].text;
+    const question = questions[current];
+    const questionText = question.text || question.questionText || "Question non définie";
+    document.getElementById('question').innerText = questionText;
+    document.getElementById('answerInput').value = "";
     startTimer();
   } else {
     showResult();
@@ -73,19 +96,68 @@ function startTimer() {
 
 function nextQuestion() {
   clearInterval(countdown);
-  const answer = prompt("Entrez votre réponse :");
-  if (answer && answer.trim().toLowerCase() === questions[current].correct.toLowerCase()) {
-    correctAnswers++;
+  const answer = document.getElementById('answerInput').value.trim();
+  const currentQuestion = questions[current];
+
+  if (answer !== "") {
+    studentAnswers.push({
+      questionId: currentQuestion._id,
+      answer: answer
+    });
+
+    if (currentQuestion.questionType === "direct" && currentQuestion.directAnswer) {
+      const expected = currentQuestion.directAnswer.trim().toLowerCase();
+      const given = answer.trim().toLowerCase();
+      if (expected === given) correctAnswers++;
+    }
+
+    if (currentQuestion.questionType === "qcm" && Array.isArray(currentQuestion.qcmOptions)) {
+      const correctOption = currentQuestion.qcmOptions.find(opt => opt.isCorrect);
+      if (correctOption) {
+        const expected = correctOption.optionText.trim().toLowerCase();
+        const given = answer.trim().toLowerCase();
+        if (expected === given) correctAnswers++;
+      }
+    }
   }
+
   current++;
   showQuestion();
 }
 
+
 function showResult() {
   document.getElementById('exam').style.display = 'none';
   document.getElementById('result').style.display = 'block';
-  const finalScore = Math.round((correctAnswers / questions.length) * 100);
-  document.getElementById('score').innerText = `Votre score est : ${finalScore} / 100`;
+
+  navigator.geolocation.getCurrentPosition((position) => {
+    const payload = {
+      answers: studentAnswers,
+      location: {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      }
+    };
+
+    fetch(`http://localhost:5000/api/student/submit-exam/${examId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('score').innerText =
+          `Votre score est : ${data.finalScore} / 100`;
+      })
+      .catch(err => {
+        console.error("Erreur lors de la soumission:", err);
+        document.getElementById('score').innerText =
+          "Erreur lors de la soumission des résultats.";
+      });
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {

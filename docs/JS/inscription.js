@@ -9,6 +9,10 @@ form.addEventListener("submit", async (e) => {
     const name = `${firstName} ${lastName}`;
     const password = document.getElementById("password").value;
     const role = document.getElementById("role").value;
+    const dob = document.getElementById("dob").value;
+    const gender = document.querySelector('input[name="gender"]:checked').value;
+    const institution = document.getElementById("institution").value;
+    const filiere = document.getElementById("filiere").value;
 
     try {
         const res = await fetch("http://localhost:5000/api/auth/register", {
@@ -21,6 +25,10 @@ form.addEventListener("submit", async (e) => {
                 email,
                 password,
                 role,
+                dob,
+                gender,
+                institution,
+                filiere
             }),
         });
 

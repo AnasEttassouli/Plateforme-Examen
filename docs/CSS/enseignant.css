@@ -283,3 +283,14 @@ footer {
 footer span {
     color: #FFD700; 
 }
+#exam-link-container {
+    margin-top: 15px;
+  }
+  #exam-link {
+    width: 100%;
+    padding: 5px;
+  }
+  #media {
+    margin-bottom: 10px;
+  }
+  

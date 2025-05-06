@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Entrer le code d'examen</title>
+  <link rel="stylesheet" href="CSS/Espace_etudiant.css">
+</head>
+<body>
+  <div id="exam-container">
+    <h2>Examen</h2>
+    <input type="text" id="examCodeInput" placeholder="Entrez le code de l'examen" />
+    <button id="startExamBtn">Suivant</button>
+  </div>
+
+  <script>
+    document.getElementById("startExamBtn").addEventListener("click", () => {
+      const code = document.getElementById("examCodeInput").value.trim();
+      if (!code) {
+        alert("Veuillez entrer le code d'examen.");
+        return;
+      }
+      // Redirige vers la page de l'examen avec l'ID
+      window.location.href = `Espace_etudiant.html?exam=${code}`;
+    });
+  </script>
+</body>
+</html>
