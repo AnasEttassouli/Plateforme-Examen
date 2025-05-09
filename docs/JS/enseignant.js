@@ -5,6 +5,7 @@ window.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  // Éléments DOM
   const createExamForm = document.getElementById('createExamForm');
   const examsContainer = document.getElementById('examsContainer');
   const addQuestionForm = document.getElementById('addQuestionForm');
@@ -12,17 +13,17 @@ window.addEventListener('DOMContentLoaded', () => {
   const menuIcon = document.getElementById("toggleMenu");
   const navList = document.querySelector("nav ul");
 
-  window.toggleQuestionType = function () {
+  // Fonction pour basculer entre les types de questions
+  window.toggleQuestionType = function() {
     const type = document.getElementById('questionType').value;
-    const qcmDiv = document.getElementById('qcmOptions');
-    const directDiv = document.getElementById('directAnswerSection');
-
-    qcmDiv.style.display = type === 'qcm' ? 'block' : 'none';
-    directDiv.style.display = type === 'directe' ? 'block' : 'none';
+    document.getElementById('qcmOptions').style.display = type === 'qcm' ? 'block' : 'none';
+    document.getElementById('directAnswerSection').style.display = type === 'directe' ? 'block' : 'none';
   };
 
+  // Gestionnaire d'événement pour le type de question
   document.getElementById('questionType')?.addEventListener('change', toggleQuestionType);
 
+  // Création d'un examen
   createExamForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = document.getElementById('examTitle').value;
@@ -41,19 +42,20 @@ window.addEventListener('DOMContentLoaded', () => {
 
       const data = await res.json();
       if (res.ok) {
-        alert("Examen créé avec succès !");
+        showToast("Examen créé avec succès !", 'success');
         createExamForm.reset();
         loadExams();
         populateExamSelect();
       } else {
-        alert(data.message || "Erreur lors de la création de l'examen.");
+        throw new Error(data.message || "Erreur lors de la création");
       }
     } catch (err) {
       console.error("Erreur création examen:", err);
-      alert("Erreur lors de la connexion au serveur.");
+      showToast(err.message || "Erreur lors de la création", 'error');
     }
   });
 
+  // Ajout d'une question
   addQuestionForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -75,14 +77,10 @@ window.addEventListener('DOMContentLoaded', () => {
       payload.toleranceRate = parseInt(document.getElementById('tolerance').value);
     } else if (type === 'qcm') {
       payload.qcmOptions = [];
-
-      const options = ['A', 'B', 'C', 'D'];
-      options.forEach(opt => {
-        const text = document.getElementById('option' + opt).value;
-        const isChecked = document.getElementById('correct' + opt).checked;
+      ['A', 'B', 'C', 'D'].forEach(opt => {
         payload.qcmOptions.push({
-          optionText: text,
-          isCorrect: isChecked
+          optionText: document.getElementById('option' + opt).value,
+          isCorrect: document.getElementById('correct' + opt).checked
         });
       });
     }
@@ -98,23 +96,22 @@ window.addEventListener('DOMContentLoaded', () => {
       });
 
       const data = await res.json();
-
       if (res.ok) {
-        alert("Question ajoutée avec succès !");
+        showToast("Question ajoutée avec succès !", 'success');
         addQuestionForm.reset();
         document.getElementById('qcmOptions').style.display = 'none';
         document.getElementById('directAnswerSection').style.display = 'none';
         loadExams();
       } else {
-        alert(data.message || "Erreur lors de l'ajout de la question.");
+        throw new Error(data.message || "Erreur lors de l'ajout");
       }
-
     } catch (err) {
       console.error("Erreur ajout question:", err);
-      alert("Erreur lors de la connexion au serveur.");
+      showToast(err.message || "Erreur lors de l'ajout", 'error');
     }
   });
 
+  // Chargement des examens
   async function loadExams() {
     try {
       const response = await fetch('http://localhost:5000/api/teacher/my-exams-with-questions', {
@@ -125,7 +122,7 @@ window.addEventListener('DOMContentLoaded', () => {
       examsContainer.innerHTML = '';
 
       if (!Array.isArray(exams) || exams.length === 0) {
-        examsContainer.innerHTML = '<p>Aucun examen créé pour l\'instant.</p>';
+        examsContainer.innerHTML = '<p class="no-exams">Aucun examen créé pour l\'instant.</p>';
         return;
       }
 
@@ -133,37 +130,65 @@ window.addEventListener('DOMContentLoaded', () => {
         const examDiv = document.createElement('div');
         examDiv.classList.add('exam-item');
         examDiv.innerHTML = `
-          <h3>${exam.title}</h3>
-          <p>${exam.description}</p>
-          <small>Public : ${exam.publicCible}</small><br>
-          <small>Lien d'examen : <code>${exam.examLink}</code></small>
-          <div class="question-list">
-            <h4>Questions ajoutées :</h4>
-            ${exam.questions && exam.questions.length > 0 ? exam.questions.map(q => `
-              <div class="question-item">
-                <p><strong>Q:</strong> ${q.text}</p>
-                ${q.type === 'qcm' ? `
-                  <ul>
-                    ${q.options.map((opt, i) => `<li>${String.fromCharCode(65 + i)}: ${opt.optionText}</li>`).join('')}
-                  </ul>
-                  <p><strong>Bonnes réponses:</strong> ${q.options.filter(opt => opt.isCorrect).map((_, i) => String.fromCharCode(65 + i)).join(', ')}</p>` :
-                  `<p><strong>Réponse attendue:</strong> ${q.reponseDirecte}</p>
-                   <p><strong>Tolérance:</strong> ${q.tolerance}%</p>`}
-                <p><strong>Note:</strong> ${q.note} - <strong>Durée:</strong> ${q.duree} secondes</p>
-                <button onclick="deleteQuestion('${q._id}', '${exam._id}')">Supprimer la question</button>
-              </div>
-            `).join('') : '<p>Aucune question ajoutée.</p>'}
+          <div class="exam-header">
+            <h3>${exam.title}</h3>
+            <div class="exam-actions">
+              <button onclick="fetchExamResults('${exam._id}')" class="btn-results">
+                <i class="fas fa-chart-bar"></i> Résultats
+              </button>
+              <button onclick="deleteExam('${exam._id}')" class="btn-delete">
+                <i class="fas fa-trash"></i> Supprimer
+              </button>
+            </div>
           </div>
-          <button onclick="fetchExamResults('${exam._id}')">Afficher les résultats</button>
+          <p class="exam-description">${exam.description}</p>
+          <div class="exam-meta">
+            <span class="exam-public">Public : ${exam.publicCible}</span>
+            <span class="exam-link">Lien : <a href="${exam.examLink}" target="_blank">${exam.examLink}</a></span>
+          </div>
+          <div class="question-list">
+            <h4>Questions (${exam.questions?.length || 0})</h4>
+            ${exam.questions?.length > 0 ? exam.questions.map(q => `
+              <div class="question-item">
+                <div class="question-content">
+                  <p class="question-text"><strong>Q:</strong> ${q.text}</p>
+                  ${q.type === 'qcm' ? `
+                    <ul class="qcm-options">
+                      ${q.options.map((opt, i) => `
+                        <li class="${opt.isCorrect ? 'correct-option' : ''}">
+                          ${String.fromCharCode(65 + i)}: ${opt.optionText}
+                        </li>`).join('')}
+                    </ul>` : `
+                    <div class="direct-answer">
+                      <p><strong>Réponse:</strong> ${q.reponseDirecte}</p>
+                      <p><strong>Tolérance:</strong> ${q.tolerance}%</p>
+                    </div>`}
+                </div>
+                <div class="question-meta">
+                  <span>Note: ${q.note}</span>
+                  <span>Durée: ${q.duree}s</span>
+                  <button onclick="deleteQuestion('${q._id}', '${exam._id}')" class="btn-small">
+                    <i class="fas fa-times"></i> Supprimer
+                  </button>
+                </div>
+              </div>`).join('') : '<p class="no-questions">Aucune question ajoutée.</p>'}
+          </div>
         `;
         examsContainer.appendChild(examDiv);
       });
 
     } catch (error) {
-      console.error('Erreur lors du chargement des examens:', error);
+      console.error('Erreur chargement examens:', error);
+      examsContainer.innerHTML = `
+        <div class="error-message">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>Erreur lors du chargement des examens</p>
+        </div>
+      `;
     }
   }
 
+  // Peupler la liste déroulante des examens
   async function populateExamSelect() {
     try {
       const response = await fetch('http://localhost:5000/api/teacher/my-exams', {
@@ -171,32 +196,34 @@ window.addEventListener('DOMContentLoaded', () => {
       });
 
       const exams = await response.json();
-      examSelect.innerHTML = '<option value="">--Sélectionner un examen--</option>';
+      examSelect.innerHTML = '<option value="">-- Sélectionner un examen --</option>';
 
-      if (!Array.isArray(exams)) return;
-
-      exams.forEach(exam => {
-        const option = document.createElement('option');
-        option.value = exam._id;
-        option.textContent = exam.title;
-        examSelect.appendChild(option);
-      });
-
+      if (Array.isArray(exams)) {
+        exams.forEach(exam => {
+          const option = document.createElement('option');
+          option.value = exam._id;
+          option.textContent = exam.title;
+          examSelect.appendChild(option);
+        });
+      }
     } catch (error) {
-      console.error('Erreur lors du chargement des examens:', error);
+      console.error('Erreur chargement examens:', error);
     }
   }
 
+  // Menu mobile
   menuIcon.addEventListener("click", () => {
     navList.classList.toggle("show");
   });
 
-  window.logout = function () {
+  // Déconnexion
+  window.logout = function() {
     localStorage.removeItem("token");
     window.location.href = "connexion.html";
   };
 
-  window.fetchExamResults = async function (examId) {
+  // Afficher les résultats d'un examen
+  window.fetchExamResults = async function(examId) {
     try {
       const response = await fetch(`http://localhost:5000/api/teacher/exam-results/${examId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -206,20 +233,45 @@ window.addEventListener('DOMContentLoaded', () => {
       const list = document.getElementById('results-list');
       list.innerHTML = '';
 
-      results.forEach(r => {
-        const li = document.createElement('li');
-        li.textContent = `${r.student.fullName} - ${r.score} points (${r.location?.latitude}, ${r.location?.longitude})`;
-        list.appendChild(li);
-      });
+      if (!Array.isArray(results) || results.length === 0) {
+        list.innerHTML = '<li class="no-results"><i class="fas fa-info-circle"></i> Aucun résultat disponible</li>';
+      } else {
+        results.forEach(r => {
+          const li = document.createElement('li');
+          li.className = 'result-item';
+          
+          const studentInfo = r.student || {};
+          const location = r.location || {};
+          
+          li.innerHTML = `
+            <div class="student-info">
+              <div class="student-name">${studentInfo.fullName || 'Anonyme'}</div>
+              <div class="student-email">${studentInfo.email || ''}</div>
+              <div class="student-score ${r.score > 50 ? 'high-score' : 'low-score'}">
+                Score: ${r.score !== undefined ? r.score + ' pts' : '--'}
+              </div>
+            </div>
+            <div class="location-info">
+              <i class="fas fa-map-marker-alt"></i>
+              ${location.latitude ? `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}` : 'Non localisé'}
+            </div>
+          `;
+          list.appendChild(li);
+        });
+      }
 
       document.getElementById('exam-results-section').style.display = 'block';
     } catch (err) {
-      console.error('Erreur lors du chargement des résultats', err);
+      console.error('Erreur chargement résultats:', err);
+      const list = document.getElementById('results-list');
+      list.innerHTML = '<li class="error"><i class="fas fa-exclamation-circle"></i> Erreur de chargement</li>';
+      document.getElementById('exam-results-section').style.display = 'block';
     }
   };
 
-  window.deleteQuestion = async function (questionId, examId) {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette question ?")) return;
+  // Supprimer une question
+  window.deleteQuestion = async function(questionId, examId) {
+    if (!confirm("Supprimer cette question ? Cette action est irréversible.")) return;
 
     try {
       const res = await fetch(`http://localhost:5000/api/teacher/delete-question/${questionId}`, {
@@ -228,21 +280,64 @@ window.addEventListener('DOMContentLoaded', () => {
       });
 
       const data = await res.json();
-
       if (res.ok) {
-        alert("Question supprimée.");
+        showToast("Question supprimée", 'success');
         loadExams();
       } else {
-        alert(data.message || "Erreur lors de la suppression.");
+        throw new Error(data.message || "Erreur lors de la suppression");
       }
-
     } catch (error) {
       console.error("Erreur suppression:", error);
-      alert("Erreur serveur.");
+      showToast(error.message || "Erreur serveur", 'error');
     }
   };
 
-  // Initial load
+  // Supprimer un examen (version corrigée)
+  window.deleteExam = async function(examId) {
+    if (!confirm("Supprimer cet examen et toutes ses questions ? Cette action est irréversible.")) return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/teacher/delete-exam/${examId}`, {
+        method: 'DELETE',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Échec de la suppression");
+      }
+
+      showToast("Examen supprimé avec succès", 'success');
+      loadExams();
+      populateExamSelect();
+
+    } catch (error) {
+      console.error("Erreur suppression examen:", error);
+      showToast(`Erreur: ${error.message || "Échec de la suppression"}`, 'error');
+    }
+  };
+
+  // Fonction d'affichage des notifications
+  function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+      <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+      <span>${message}</span>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.classList.add('fade-out');
+      setTimeout(() => toast.remove(), 500);
+    }, 4000);
+  }
+
+  // Initialisation
   loadExams();
   populateExamSelect();
+  toggleQuestionType(); // Initialise l'affichage des types de questions
 });
