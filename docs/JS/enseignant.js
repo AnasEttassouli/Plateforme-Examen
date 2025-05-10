@@ -5,7 +5,7 @@ window.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Éléments DOM
+
   const createExamForm = document.getElementById('createExamForm');
   const examsContainer = document.getElementById('examsContainer');
   const addQuestionForm = document.getElementById('addQuestionForm');
@@ -13,17 +13,17 @@ window.addEventListener('DOMContentLoaded', () => {
   const menuIcon = document.getElementById("toggleMenu");
   const navList = document.querySelector("nav ul");
 
-  // Fonction pour basculer entre les types de questions
+  
   window.toggleQuestionType = function() {
     const type = document.getElementById('questionType').value;
     document.getElementById('qcmOptions').style.display = type === 'qcm' ? 'block' : 'none';
     document.getElementById('directAnswerSection').style.display = type === 'directe' ? 'block' : 'none';
   };
 
-  // Gestionnaire d'événement pour le type de question
+  
   document.getElementById('questionType')?.addEventListener('change', toggleQuestionType);
 
-  // Création d'un examen
+  
   createExamForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = document.getElementById('examTitle').value;
@@ -55,7 +55,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Ajout d'une question
+ 
   addQuestionForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -111,7 +111,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Chargement des examens
+  
   async function loadExams() {
     try {
       const response = await fetch('http://localhost:5000/api/teacher/my-exams-with-questions', {
@@ -188,7 +188,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Peupler la liste déroulante des examens
+
   async function populateExamSelect() {
     try {
       const response = await fetch('http://localhost:5000/api/teacher/my-exams', {
@@ -211,18 +211,18 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Menu mobile
+  
   menuIcon.addEventListener("click", () => {
     navList.classList.toggle("show");
   });
 
-  // Déconnexion
+
   window.logout = function() {
     localStorage.removeItem("token");
     window.location.href = "connexion.html";
   };
 
-  // Afficher les résultats d'un examen
+
   window.fetchExamResults = async function(examId) {
     try {
       const response = await fetch(`http://localhost:5000/api/teacher/exam-results/${examId}`, {
@@ -269,7 +269,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Supprimer une question
+
   window.deleteQuestion = async function(questionId, examId) {
     if (!confirm("Supprimer cette question ? Cette action est irréversible.")) return;
 
@@ -292,7 +292,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Supprimer un examen (version corrigée)
+
   window.deleteExam = async function(examId) {
     if (!confirm("Supprimer cet examen et toutes ses questions ? Cette action est irréversible.")) return;
 
@@ -320,7 +320,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Fonction d'affichage des notifications
+
   function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -336,8 +336,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 4000);
   }
 
-  // Initialisation
+ 
   loadExams();
   populateExamSelect();
-  toggleQuestionType(); // Initialise l'affichage des types de questions
+  toggleQuestionType();
 });
