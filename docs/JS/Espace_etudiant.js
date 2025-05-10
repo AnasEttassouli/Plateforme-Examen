@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // Check authentication
+   
     const token = localStorage.getItem('token');
     if (!token) {
         alert('Veuillez vous connecter pour accéder à cet examen');
@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // Get exam link from URL
+    
     const urlParams = new URLSearchParams(window.location.search);
     const examLink = urlParams.get('exam');
     if (!examLink) {
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // DOM Elements
+    
     const geolocationSection = document.getElementById('geolocationSection');
     const examIntroSection = document.getElementById('examIntroSection');
     const questionSection = document.getElementById('questionSection');
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const locationDetails = document.getElementById('locationDetails');
     const totalTime = document.getElementById('totalTime');
 
-    // Exam state
+    
     let examData = null;
     let questions = [];
     let currentQuestionIndex = 0;
@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     let questionInterval = null;
     let globalInterval = null;
 
-    // Initialize exam
+    
     try {
-        // Fetch exam data
+        
         const response = await fetch(`http://localhost:5000/api/student/exam/${examLink}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         examData = data.exam;
         questions = data.questions;
 
-        // Display exam description
+        
         examDescription.innerHTML = `
             <h3>${examData.title}</h3>
             <p>${examData.description}</p>
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <p><strong>Nombre de questions:</strong> ${questions.length}</p>
         `;
 
-        // Initialize answers object
+        
         questions.forEach((q, index) => {
             answers[index] = {
                 questionId: q._id,
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // Geolocation handler
+    
     enableGeolocationBtn.addEventListener('click', () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Start exam handler
+    
     startExamBtn.addEventListener('click', () => {
         examIntroSection.classList.add('hidden');
         questionSection.classList.remove('hidden');
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         startTimers();
     });
 
-    // Navigation handlers
+    
     prevQuestionBtn.addEventListener('click', () => {
         if (currentQuestionIndex > 0) {
             saveAnswer(currentQuestionIndex);
@@ -171,29 +171,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'connexion.html';
     });
 
-    // Display question function
+    
     function displayQuestion(index) {
         const question = questions[index];
         const questionContent = document.getElementById('questionContent');
         
-        // Update counter
+        
         questionCounter.textContent = `Question ${index + 1}/${questions.length}`;
         
-        // Update navigation buttons
+        
         prevQuestionBtn.disabled = index === 0;
         nextQuestionBtn.classList.toggle('hidden', index === questions.length - 1);
         submitExamBtn.classList.toggle('hidden', index !== questions.length - 1);
 
-        // Clear previous question
+        
         questionContent.innerHTML = '';
         
-        // Add question text
+        
         const questionText = document.createElement('p');
         questionText.className = 'question-text';
         questionText.textContent = question.questionText;
         questionContent.appendChild(questionText);
         
-        // Add question type specific content
+        
         if (question.questionType === 'direct') {
             const input = document.createElement('input');
             input.type = 'text';
@@ -242,12 +242,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             questionContent.appendChild(optionsList);
         }
         
-        // Set question timer
+        
         questionTimeLeft = question.durationInSeconds;
         updateQuestionTimerDisplay();
     }
 
-    // Save answer function
+    
     function saveAnswer(index) {
         const question = questions[index];
         const questionContent = document.getElementById('questionContent');
@@ -256,12 +256,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             const input = questionContent.querySelector('.direct-answer-input');
             answers[index].answer = input ? input.value : '';
         }
-        // QCM answers are saved in real-time via click handlers
+        
     }
 
-    // Timer functions
+    
     function startTimers() {
-        // Global timer
+        
         globalInterval = setInterval(() => {
             globalTimeElapsed++;
             const minutes = Math.floor(globalTimeElapsed / 60);
@@ -269,13 +269,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             globalTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }, 1000);
         
-        // Question timer
+       
         questionInterval = setInterval(() => {
             questionTimeLeft--;
             updateQuestionTimerDisplay();
             
             if (questionTimeLeft <= 0) {
-                // Auto move to next question or submit if last question
+                
                 if (currentQuestionIndex < questions.length - 1) {
                     saveAnswer(currentQuestionIndex);
                     currentQuestionIndex++;
@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const seconds = questionTimeLeft % 60;
         questionTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         
-        // Change color when time is running out
+        
         if (questionTimeLeft <= 10) {
             questionTimer.style.color = '#e74c3c';
             questionTimer.style.fontWeight = 'bold';
@@ -302,14 +302,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Show results function
+    
     function showResults(score) {
         questionSection.classList.add('hidden');
         resultsSection.classList.remove('hidden');
         
         finalScore.textContent = score;
         
-        // Set score message
+        
         if (score >= 80) {
             scoreMessage.textContent = 'Excellent travail !';
             scoreMessage.style.color = '#27ae60';
@@ -321,14 +321,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             scoreMessage.style.color = '#e74c3c';
         }
         
-        // Display location
+       
         if (location) {
             locationDetails.textContent = `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`;
         } else {
             locationDetails.textContent = 'Non disponible';
         }
         
-        // Display total time
+    
         const minutes = Math.floor(globalTimeElapsed / 60);
         const seconds = globalTimeElapsed % 60;
         totalTime.textContent = `${minutes} min ${seconds} sec`;
