@@ -19,7 +19,6 @@ app.use(cors({
 
 app.use(express.json());
 
-// ✅ ✅ هنا نضيف هذا السطر ليقدم مجلد docs كواجهة
 app.use(express.static(path.join(__dirname, '..', 'docs')));
 
 app.get('/', (req, res) => {
