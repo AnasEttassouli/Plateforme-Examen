@@ -54,7 +54,7 @@ ul {
     }
 }
 
-/* Header Styles */
+
 header {
     background-color: white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -132,7 +132,7 @@ header .container nav ul li a:hover {
     color: #FFD700;
 }
 
-/* Landing Section */
+
 .landing {
     background-image: url(../IMAGES/82.jpg);
     background-size: cover;
@@ -201,7 +201,6 @@ header .container nav ul li a:hover {
     }
 }
 
-/* Section Styles */
 .section {
     padding: 60px 0;
 }
@@ -213,7 +212,7 @@ header .container nav ul li a:hover {
     text-align: center;
 }
 
-/* Form Styles */
+
 form {
     background: white;
     padding: 30px;
@@ -254,7 +253,7 @@ textarea {
     resize: vertical;
 }
 
-/* Button Styles */
+
 .button, button {
     background-color: var(--main-color);
     color: white;
@@ -281,14 +280,14 @@ textarea {
     width: 100%;
 }
 
-/* Form Buttons */
+
 form button {
     margin: 30px auto 0;
     padding: 12px 30px;
     min-width: 200px;
 }
 
-/* Exam List Styles */
+
 .exam-list {
     margin-top: 30px;
 }
@@ -343,7 +342,7 @@ form button {
     margin: 10px 0 10px 20px;
 }
 
-/* Action Buttons */
+
 .btn-primary {
     background-color: var(--main-color);
 }
@@ -366,7 +365,7 @@ form button {
     margin-top: 10px;
 }
 
-/* QCM Options */
+
 #qcmOptions .form-group {
     margin-bottom: 10px;
 }
@@ -380,7 +379,7 @@ form button {
     margin-right: 10px;
 }
 
-/* Exam Link Container */
+
 #exam-link-container {
     background-color: #f8f9fa;
     padding: 15px;
@@ -395,7 +394,7 @@ form button {
     border: 1px solid #ddd;
 }
 
-/* Results Section */
+
 #exam-results-section {
     background-color: white;
     padding: 20px;
@@ -409,7 +408,7 @@ form button {
     border-bottom: 1px solid #eee;
 }
 
-/* Footer */
+
 footer {
     background-color: var(--main-color);
     color: white;
@@ -422,7 +421,7 @@ footer span {
     color: #FFD700;
     font-weight: 600;
 }
-/* Styles généraux */
+
 .exam-item {
     background: #fff;
     border-radius: 8px;
@@ -486,7 +485,7 @@ footer span {
     font-weight: bold;
   }
   
-  /* Résultats */
+
   .result-item {
     display: flex;
     justify-content: space-between;
@@ -506,7 +505,7 @@ footer span {
     color: #e74c3c;
   }
   
-  /* Toast */
+
   .toast {
     position: fixed;
     bottom: 20px;
@@ -538,7 +537,7 @@ footer span {
   .toast.fade-out {
     opacity: 0;
   }
-/* Responsive Adjustments */
+
 @media (max-width: 767px) {
     .section {
         padding: 40px 0;
